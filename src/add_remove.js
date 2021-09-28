@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import fillOutList from './index.js';
+import { fillOutList, todoTasks } from './index.js';
 
 function createTask(list, input) {
   class Task {
@@ -13,18 +13,31 @@ function createTask(list, input) {
   return new1;
 }
 
-function taskEdit(task, list, element) {
+function taskEdit(task, element) {
   task.addEventListener('input', () => {
     element.description = task.value;
   });
   task.addEventListener('keyup', (event) => {
     if (event.keyCode === 13) {
-      localStorage.setItem('pushing', JSON.stringify(list));
+      localStorage.setItem('pushing', JSON.stringify(todoTasks));
     }
   });
 }
 
-function filter(list) {
+function deleteElement(list, index) {
+    list = list.filter((el) => el.index !== index.index);
+    filtering(list);
+}
+
+function deleteCompleted(button, list) {
+  button.addEventListener('click', () => {
+    list = list.filter((el) => el.completed !== true);
+    filtering(list);
+  });
+}
+
+
+function filtering(list) {
   localStorage.setItem('pushing', JSON.stringify(list));
   const container = document.getElementById('listWrapper');
   while (container.firstChild) {
@@ -34,21 +47,5 @@ function filter(list) {
   fillOutList(obtain);
 }
 
-function clicky(element, list, index) {
-  element.addEventListener('click', () => {
-    list = list.filter((el) => el.index !== index.index);
-    filter(list);
-  });
-}
 
-function deleteCompleted(button, list) {
-  button.addEventListener('click', () => {
-    list = list.filter((el) => el.completed !== true);
-
-    filter(list);
-  });
-}
-
-export {
-  createTask, taskEdit, clicky, deleteCompleted,
-};
+export { createTask, taskEdit, deleteElement, deleteCompleted, filtering };
